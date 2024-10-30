@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Pediatric Nursing Assistant</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #f0f2f5;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chat-header {
+            background: #0066cc;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .chat-messages {
+            height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 10px;
+            max-width: 80%;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+        .bot-message {
+            background: white;
+            margin-right: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .user-message {
+            background: #0066cc;
+            color: white;
+            margin-left: auto;
+        }
+        .input-area {
+            padding: 20px;
+            background: white;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #ddd;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #0066cc;
+        }
+        button {
+            padding: 12px 24px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover { 
+            background: #0052a3; 
+        }
+        .topic-list {
+            padding: 10px;
+            margin: 10px 0;
+            background: #e8f0fe;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2 style="margin: 0;">Pediatric Nursing Assistant - Comprehensive Guide</h2>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Ask about any pediatric condition, emergency, or care...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+<script>
+        const knowledgeBase = {
+            'pku': {
+                definition: "Phenylketonuria (PKU) is an inherited metabolic disorder where the newborn lacks the enzyme phenylalanine hydroxylase, leading to phenylalanine accumulation causing cognitive impairment.",
+                assessment: "Key findings include growth failure, frequent vomiting, irritability, musty urine odor, microcephaly, heart defects, and characteristic features like blue eyes, fair skin, and light blonde hair.",
+                nursing: "Focus on dietary restrictions (20-30mg phenylalanine/kg/day), monitoring phenylalanine levels (goal 2-8 mg/dL), monitoring breastfeeding impact, and parent education with dietitian consultation.",
+                complications: "Can lead to severe cognitive impairment, hyperactivity, bizarre behavior, head banging, arm biting, disorientation, spasticity, and seizures."
+            },
+            'meningocele': {
+                definition: "Neural tube defect present at birth affecting CNS and spine, where meninges and spinal fluid protrude in a sac-like cyst.",
+                assessment: "Look for protrusion midline of spine, sensory/neuromotor dysfunction, possible urinary/fecal incontinence, and limb deformities.",
+                nursing: "Preoperative: Protect sac, maintain sterile environment, monitor for infection. Postoperative: Monitor vital signs, I&O, pain management, and maintain prone position.",
+                complications: "Can lead to skin pressure injuries, latex allergies, increased intracranial pressure, bladder dysfunction, and orthopedic issues."
+            },
+            'nec': {
+                definition: "Necrotizing enterocolitis is an inflammatory disease of GI mucosa caused by ischemia/hypoxia, leading to death of mucosal cells.",
+                assessment: "Watch for abdominal distention, gastric residuals, bloody stools, apnea, hypotension, lethargy, poor feeding, and decreased urine output.",
+                nursing: "Withhold feedings, administer IV/TPN, insert NG tube, careful abdominal handling, monitor vital signs, prepare for possible surgery.",
+                complications: "Can lead to short-bowel syndrome, colonic stricture, fat malabsorption, and failure to thrive."
+            },
+            'rds': {
+                definition: "Respiratory distress syndrome occurs from surfactant deficiency in lungs, characterized by poor gas exchange and ventilatory failure.",
+                assessment: "Signs include tachypnea (>60/min), nasal flaring, grunting, retractions, labored breathing, crackles, cyanosis.",
+                nursing: "Provide airway maintenance, thermoregulation, ventilatory support, administer surfactant as prescribed, monitor oxygen levels.",
+                complications: "Can lead to pneumothorax, retinopathy of prematurity, bronchopulmonary dysplasia, infection."
+            },
+            'sids': {
+                definition: "Sudden Infant Death Syndrome (SIDS) is the sudden, unpredictable death of an infant without identified cause, even after investigation and autopsy.",
+                assessment: "Risk factors include maternal smoking, secondhand smoke, co-sleeping, nonstandard bedding, prone sleeping, low birth weight, prematurity, multiple births.",
+                nursing: "Provide family support, allow expression of feelings, plan follow-up home health visit, refer to support groups and counseling.",
+                prevention: "Place infant on back for sleep, avoid tobacco exposure, prevent overheating, use firm mattress, remove loose bedding/toys, avoid co-sleeping, encourage pacifier use."
+            },
+            'drowning': {
+                definition: "Asphyxiation while submerged in fluid, can occur in as little as 1 inch of water. Critical emergency requiring immediate intervention.",
+                assessment: "Evaluate respiratory status, consciousness level, body temperature. Check for injuries and monitor for cerebral edema.",
+                nursing: "Provide immediate respiratory support, maintain body temperature, monitor vital signs, prepare for possible intubation, observe for complications.",
+                prevention: "Ensure proper pool fencing, constant supervision, use of life jackets, never leave children unattended near water."
+            },
+            'chromosomal': {
+                definition: "Genetic disorders affecting chromosome number or structure, including conditions like Down syndrome, Turner syndrome, and others.",
+                assessment: "Evaluate physical features, developmental progress, organ systems (especially cardiac), and growth patterns.",
+                nursing: "Monitor growth and development, coordinate specialist care, provide feeding support, assist with therapeutic interventions.",
+                complications: "May include developmental delays, cardiac defects, endocrine disorders, and other system-specific issues."
+            },
+            'fetal alcohol': {
+                definition: "Group of conditions caused by alcohol exposure during pregnancy, affecting physical and neurological development.",
+                assessment: "Characteristic facial features, growth deficiency, CNS problems, behavioral/learning difficulties.",
+                nursing: "Monitor development, provide feeding support, coordinate therapeutic services, assist with behavioral management.",
+                complications: "Permanent brain damage, growth problems, vision/hearing deficits, learning disabilities, behavioral issues."
+            },
+            'depression': {
+                definition: "Mental health condition in children manifesting as persistent sadness, loss of interest, and behavioral changes.",
+                assessment: "Monitor mood, social interactions, sleep patterns, appetite, school performance, and any suicidal ideation.",
+                nursing: "Provide emotional support, monitor for safety, coordinate mental health services, educate family.",
+                treatment: "May include therapy, medication management, family support, school accommodations."
+            },
+            'hypothyroidism': {
+                definition: "Congenital condition where thyroid gland is absent or nonfunctioning, affecting metabolism and development.",
+                assessment: "Check for lethargy, poor feeding, constipation, dry skin, decreased activity, delayed development.",
+                nursing: "Administer thyroid replacement, monitor growth and development, provide feeding support.",
+                complications: "Can lead to developmental delays, growth problems, cognitive impairment if untreated."
+            },
+            'sepsis': {
+                definition: "Severe systemic infection requiring immediate intervention, particularly dangerous in newborns.",
+                assessment: "Monitor temperature, vital signs, feeding, activity level, skin color, respiratory status.",
+                nursing: "Provide immediate antibiotic therapy, support vital functions, monitor closely, prevent complications.",
+                complications: "Can lead to organ failure, shock, long-term developmental issues if not treated promptly."
+            }
+        };
+function addMessage(text, isUser) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function generateResponse(input) {
+            const lowercaseInput = input.toLowerCase();
+            
+            // Handle help queries
+            if (lowercaseInput.includes('help') || lowercaseInput.includes('what can you') || lowercaseInput === '') {
+                return `I can provide information about these pediatric topics:
+
+MEDICAL CONDITIONS:
+- PKU (Phenylketonuria)
+- NEC (Necrotizing Enterocolitis)
+- RDS (Respiratory Distress Syndrome)
+- Hypothyroidism
+- Sepsis
+
+EMERGENCIES:
+- SIDS (Sudden Infant Death Syndrome)
+- Drowning
+- Emergency Care
+
+GENETIC/DEVELOPMENTAL:
+- Chromosomal Abnormalities
+- Fetal Alcohol Syndrome/FASD
+
+MENTAL HEALTH:
+- Depression
+- Psychosocial Issues
+
+For each condition, you can ask about:
+- Definition/What is it
+- Assessment/Signs/Symptoms
+- Nursing Care/Treatment
+- Complications
+- Prevention (where applicable)
+
+Example questions:
+"What is PKU?"
+"How do you assess for sepsis?"
+"What is the nursing care for NEC?"
+"What are the complications of SIDS?"`;
+            }
+
+            // Check each condition
+            for (const [condition, info] of Object.entries(knowledgeBase)) {
+                if (lowercaseInput.includes(condition)) {
+                    if (lowercaseInput.includes('what is') || lowercaseInput.includes('definition')) {
+                        return `Definition of ${condition.toUpperCase()}:\n\n${info.definition}`;
+                    } else if (lowercaseInput.includes('assessment') || lowercaseInput.includes('signs') || lowercaseInput.includes('symptoms')) {
+                        return `Assessment for ${condition.toUpperCase()}:\n\n${info.assessment}`;
+                    } else if (lowercaseInput.includes('nursing') || lowercaseInput.includes('care') || lowercaseInput.includes('treatment')) {
+                        return `Nursing Care for ${condition.toUpperCase()}:\n\n${info.nursing}`;
+                    } else if (lowercaseInput.includes('prevent')) {
+                        return info.prevention ? 
+                            `Prevention of ${condition.toUpperCase()}:\n\n${info.prevention}` : 
+                            `Prevention information not available for ${condition.toUpperCase()}`;
+                    } else if (lowercaseInput.includes('complication')) {
+                        return `Complications of ${condition.toUpperCase()}:\n\n${info.complications || "Complication information not available."}`;
+                    } else {
+                        let response = `COMPREHENSIVE INFORMATION ABOUT ${condition.toUpperCase()}:\n\n`;
+                        response += `Definition:\n${info.definition}\n\n`;
+                        response += `Assessment:\n${info.assessment}\n\n`;
+                        response += `Nursing Care:\n${info.nursing}`;
+                        if (info.complications) response += `\n\nComplications:\n${info.complications}`;
+                        if (info.prevention) response += `\n\nPrevention:\n${info.prevention}`;
+                        return response;
+                    }
+                }
+            }
+            return "I'm not sure about that specific topic. Try asking about one of the conditions listed above, or type 'help' to see all topics I can assist with.";
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            if (message) {
+                addMessage(message, true);
+                const response = generateResponse(message);
+                addMessage(response, false);
+                input.value = '';
+            }
+        }
+
+        // Handle Enter key
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initial welcome message
+        addMessage(`Welcome to the Pediatric Nursing Assistant! 
+
+I can help you learn about various pediatric conditions, emergencies, and care protocols. 
+
+Type 'help' to see all available topics, or ask me about any specific condition.
+
+Example questions:
+- "What is PKU?"
+- "How do you assess for sepsis?"
+- "What is the nursing care for NEC?"
+- "What are the complications of SIDS?"`, false);
+    </script>
+</body>
+</html>
